@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style>
+		ul {
+			list-style-type: disc;
+		}
+
+		ul ul {
+			list-style-type: circle;
+		}
+
+		ul ul ul {
+			list-style-type: square;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- User interface for different actions -->
+	<h1>Dynamic Multi-level Bulleted List</h1>
+	<div>
+		<!-- Input and label for adding a new element at the end of the list -->
+		<input type="radio" name="action" value="add" id="add-radio">
+		<label for="add-radio">Add New Element:</label>
+		<input type="text" id="add-text" value="New Element">
+		<br>
+		<!-- Input and label for inserting a new item at a specific position -->
+		<input type="radio" name="action" value="insert" id="insert-radio">
+		<label for="insert-radio">Insert New Item:</label>
+		<input type="text" id="insert-text" value="New Item">
+		<br>
+		<!-- Input and label for changing the text of a list item -->
+		<input type="radio" name="action" value="change" id="change-radio">
+		<label for="change-radio">Change Text:</label>
+		<input type="text" id="change-text" value="New Text">
+		<br>
+		<!-- Input and label for adding a nested list -->
+		<input type="radio" name="action" value="nested" id="nested-radio">
+		<label for="nested-radio">Add Nested List:</label>
+		<input type="text" id="nested-text" value="Nested List">
+		<br>
+		<!-- Input and label for removing an item -->
+		<input type="radio" name="action" value="remove" id="remove-radio">
+		<label for="remove-radio">Remove Item</label>
+	</div>
+	<br>
+	<!-- Button to add a new list -->
+	<button onclick="addNewList()">Add New List</button>
+	<hr>
+	<div id="list-container" onselectstart="return false;">
+		<!-- Root bulleted list with one initial list item -->
+		<ul id="root-list">
+			<li>
+				<!-- Clickable span representing the list item -->
+				<span onclick="handleClick(event)">List Item 1</span>
+			</li>
+		</ul>
+	</div>
+
+	<script>
+		// Function to add a new list when the "Add New List" button is clicked
+		function addNewList() {
+			const rootList = document.getElementById('root-list');
+			const newItem = document.createElement('li');
+			newItem.innerHTML = '<span onclick="handleClick(event)">New List Item</span>';
+			rootList.appendChild(newItem);
+		}
+
+		// Function to handle the click event on list items
+		function handleClick(event) {
+			// Get the selected action from the radio buttons
+			const action = document.querySelector('input[name="action"]:checked').value;
+			// Get the corresponding text input based on the selected action
+			const text = getTextFromInput(action);
+
+			// Call the appropriate function based on the selected action
+			switch (action) {
+				case 'change':
+					changeText(event.target, text);
+					break;
+				case 'add':
+					addNewElement(event.target, text);
+					break;
+				case 'insert':
+					insertNewItem(event.target, text);
+					break;
+				case 'nested':
+					addNestedList(event.target, text);
+					break;
+				case 'remove':
+					removeItem(event.target);
+					break;
+			}
+		}
+
+		// Function to get the text input based on the selected action
+		function getTextFromInput(action) {
+			switch (action) {
+				case 'change':
+					return document.getElementById('change-text').value;
+				case 'add':
+					return document.getElementById('add-text').value;
+				case 'insert':
+					return document.getElementById('insert-text').value;
+				case 'nested':
+					return document.getElementById('nested-text').value;
+				default:
+					return '';
+			}
+		}
+
+		// Function to change the text of a list item
+		function changeText(target, text) {
+			target.textContent = text;
+		}
+
+		// Function to add a new element at the end of the list
+		function addNewElement(target, text) {
+			const rootList = document.getElementById('root-list');
+			const newItem = document.createElement('li');
+			newItem.innerHTML = '<span onclick="handleClick(event)">' + text + '</span>';
+			rootList.appendChild(newItem);
+		}
+
+		// Function to insert a new item at a specific position in the list
+		function insertNewItem(target, text) {
+			const newItem = document.createElement('li');
+			newItem.innerHTML = '<span onclick="handleClick(event)">' + text + '</span>';
+			target.parentNode.parentNode.insertBefore(newItem, target.parentNode);
+		}
+
+		// Function to add a nested list for a list item
+		function addNestedList(target, text) {
+			// Check if the parent already has a nested list
+			if (target.parentNode.querySelector('ul')) {
+				alert('Cannot create nested list for an element that already has a child list.');
+				return;
+			}
+
+			const nestedList = document.createElement('ul');
+			const newItem = document.createElement('li');
+			newItem.innerHTML = '<span onclick="handleClick(event)">' + text + '</span>';
+			nestedList.appendChild(newItem);
+			target.parentNode.appendChild(nestedList);
+		}
+
+		// Function to remove a list item
+		function removeItem(target) {
+			const parentList = target.parentNode.parentNode;
+			parentList.removeChild(target.parentNode);
+		}
+	</script>
+</body>
+
+</html>
